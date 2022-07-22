@@ -48,3 +48,23 @@ Thumbs.db
 *.mov
 *.wmv
 
+# Python virtual env
+venv/
+
+# Pytest
+.pytest-cache/
+
+# Environment variables
+.env
+
+# Fission
+specs/
+
+# Development scripts
+configure.sh
+remove_fission.sh
+run.sh
+set_variables.sh
+
+
+mutation_tests_reports/
