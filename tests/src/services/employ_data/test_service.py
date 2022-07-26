@@ -3,35 +3,43 @@ from unittest.mock import patch
 import pytest
 from persephone_client import Persephone
 
-from src.domain.exceptions.model import InternalServerError
-from src.domain.models.request.model import PoliticallyExposedCondition
-from src.repositories.step_validator.repository import StepValidator
+from src.domain.exceptions.model import InternalServerError, InvalidStepError
+from src.domain.models.request.model import (
+    PoliticallyExposedCondition,
+    PoliticallyExposedRequest,
+)
+from src.domain.models.user_data.onboarding_step.model import UserOnboardingStep
+from src.domain.models.user_data.politically_exposed.model import PoliticallyExposedData
 from src.repositories.user.repository import UserRepository
 from src.services.employ_data.service import PoliticallyExposedService
+from src.transport.user_step.transport import StepChecker
 
-tax_residence_model_dummy = PoliticallyExposedCondition(
+politically_exposed_model_dummy = PoliticallyExposedCondition(
     **{"is_politically_exposed": True, "politically_exposed_names": ["Giogio"]}
 )
 
-payload_dummy = {
-    "x_thebes_answer": "x_thebes_answer",
-    "data": {"user": {"unique_id": "unique_id"}},
-}
+politically_exposed_request_dummy = PoliticallyExposedRequest(
+    x_thebes_answer="x_thebes_answer",
+    unique_id="unique_id",
+    politically_exposed=politically_exposed_model_dummy,
+)
+politically_exposed_data_dummy = PoliticallyExposedData(
+    unique_id=politically_exposed_request_dummy.unique_id,
+    is_politically_exposed=politically_exposed_model_dummy.is_politically_exposed,
+    politically_exposed_names=politically_exposed_model_dummy.politically_exposed_names,
+)
+onboarding_step_correct_stub = UserOnboardingStep("finished", "politically_exposed")
+onboarding_step_incorrect_stub = UserOnboardingStep("finished", "some_step")
 
 
-def test___model_politically_exposed_data_to_persephone():
-    politically_exposed = True
-    politically_exposed_names = ["string"]
-    unique_id = "string"
+def test___model_company_director_data_to_persephone():
     result = PoliticallyExposedService._PoliticallyExposedService__model_politically_exposed_data_to_persephone(
-        politically_exposed=politically_exposed,
-        politically_exposed_names=politically_exposed_names,
-        unique_id=unique_id,
+        politically_exposed_data_dummy
     )
     expected_result = {
-        "unique_id": unique_id,
-        "politically_exposed": politically_exposed,
-        "politically_exposed_names": politically_exposed_names,
+        "unique_id": politically_exposed_data_dummy.unique_id,
+        "politically_exposed": politically_exposed_data_dummy.is_politically_exposed,
+        "politically_exposed_names": politically_exposed_data_dummy.politically_exposed_names,
     }
     assert result == expected_result
 
@@ -39,19 +47,20 @@ def test___model_politically_exposed_data_to_persephone():
 @pytest.mark.asyncio
 @patch.object(UserRepository, "update_user")
 @patch.object(Persephone, "send_to_persephone")
-@patch.object(StepValidator, "validate_onboarding_step")
+@patch.object(StepChecker, "get_onboarding_step")
 async def test_update_politically_exposed_data_for_us(
-    step_validator_mock, persephone_client_mock, update_user_mock
+    get_onboarding_step_mock, persephone_client_mock, update_user_mock
 ):
+    get_onboarding_step_mock.return_value = onboarding_step_correct_stub
     persephone_client_mock.return_value = (True, 0)
     update_user_mock.return_value = True
     result = await PoliticallyExposedService.update_politically_exposed_data_for_us(
-        tax_residence_model_dummy, payload_dummy
+        politically_exposed_request_dummy
     )
     expected_result = None
 
     assert result == expected_result
-    assert step_validator_mock.called
+    assert get_onboarding_step_mock.called
     assert persephone_client_mock.called
     assert update_user_mock.called
 
@@ -59,18 +68,39 @@ async def test_update_politically_exposed_data_for_us(
 @pytest.mark.asyncio
 @patch.object(UserRepository, "update_user")
 @patch.object(Persephone, "send_to_persephone")
-@patch.object(StepValidator, "validate_onboarding_step")
-async def test_update_politically_exposed_data_for_us_when_cant_send_to_persephone(
-    step_validator_mock, persephone_client_mock, update_user_mock
+@patch.object(StepChecker, "get_onboarding_step")
+async def test_update_politically_exposed_data_for_us_when_user_is_in_wrong_step(
+    get_onboarding_step_mock, persephone_client_mock, update_user_mock
 ):
+    get_onboarding_step_mock.return_value = onboarding_step_incorrect_stub
+    persephone_client_mock.return_value = (True, 0)
+    update_user_mock.return_value = True
+    with pytest.raises(InvalidStepError):
+        result = await PoliticallyExposedService.update_politically_exposed_data_for_us(
+            politically_exposed_request_dummy
+        )
+
+    assert get_onboarding_step_mock.called
+    assert not persephone_client_mock.called
+    assert not update_user_mock.called
+
+
+@pytest.mark.asyncio
+@patch.object(UserRepository, "update_user")
+@patch.object(Persephone, "send_to_persephone")
+@patch.object(StepChecker, "get_onboarding_step")
+async def test_update_politically_exposed_data_for_us_when_cant_send_to_persephone(
+    get_onboarding_step_mock, persephone_client_mock, update_user_mock
+):
+    get_onboarding_step_mock.return_value = onboarding_step_correct_stub
     persephone_client_mock.return_value = (False, 0)
     update_user_mock.return_value = True
     with pytest.raises(InternalServerError):
         result = await PoliticallyExposedService.update_politically_exposed_data_for_us(
-            tax_residence_model_dummy, payload_dummy
+            politically_exposed_request_dummy
         )
 
-    assert step_validator_mock.called
+    assert get_onboarding_step_mock.called
     assert persephone_client_mock.called
     assert not update_user_mock.called
 
@@ -78,17 +108,18 @@ async def test_update_politically_exposed_data_for_us_when_cant_send_to_persepho
 @pytest.mark.asyncio
 @patch.object(UserRepository, "update_user")
 @patch.object(Persephone, "send_to_persephone")
-@patch.object(StepValidator, "validate_onboarding_step")
+@patch.object(StepChecker, "get_onboarding_step")
 async def test_update_politically_exposed_data_for_us_when_cant_update_user_register(
-    step_validator_mock, persephone_client_mock, update_user_mock
+    get_onboarding_step_mock, persephone_client_mock, update_user_mock
 ):
+    get_onboarding_step_mock.return_value = onboarding_step_correct_stub
     persephone_client_mock.return_value = (True, 0)
     update_user_mock.return_value = False
     with pytest.raises(InternalServerError):
         result = await PoliticallyExposedService.update_politically_exposed_data_for_us(
-            tax_residence_model_dummy, payload_dummy
+            politically_exposed_request_dummy
         )
 
-    assert step_validator_mock.called
+    assert get_onboarding_step_mock.called
     assert persephone_client_mock.called
     assert update_user_mock.called

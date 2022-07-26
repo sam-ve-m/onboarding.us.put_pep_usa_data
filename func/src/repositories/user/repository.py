@@ -1,6 +1,7 @@
 from decouple import config
 from etria_logger import Gladsheim
 
+from src.domain.models.user_data.model import UserData
 from src.infrastructures.mongo_db.infrastructure import MongoDBInfrastructure
 
 
@@ -29,11 +30,13 @@ class UserRepository:
             raise ex
 
     @classmethod
-    async def update_user(cls, unique_id: str, new: dict, upsert: bool = False) -> bool:
-        user_filter = {"unique_id": unique_id}
+    async def update_user(cls, user_data: UserData) -> bool:
+        user_filter = {"unique_id": user_data.unique_id}
         try:
             collection = await cls.__get_collection()
-            await collection.update_one(user_filter, {"$set": new}, upsert=upsert)
+            await collection.update_one(
+                user_filter, {"$set": user_data.get_data_representation()}
+            )
             return True
         except Exception as ex:
             Gladsheim.error(

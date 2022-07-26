@@ -2,6 +2,8 @@ from typing import Optional, Dict, Any, List
 
 from pydantic import BaseModel, root_validator, constr
 
+from src.domain.models.jwt_data.model import Jwt
+
 
 class PoliticallyExposedCondition(BaseModel):
     is_politically_exposed: bool
@@ -20,3 +22,25 @@ class PoliticallyExposedCondition(BaseModel):
                 "You need inform the field politically_exposed_names if you are politically exposed person"
             )
         return values
+
+
+class PoliticallyExposedRequest:
+    def __init__(
+        self,
+        x_thebes_answer: str,
+        unique_id: str,
+        politically_exposed: PoliticallyExposedCondition,
+    ):
+        self.x_thebes_answer = x_thebes_answer
+        self.unique_id = unique_id
+        self.politically_exposed = politically_exposed
+
+    @classmethod
+    async def build(cls, x_thebes_answer: str, parameters: dict):
+        jwt = await Jwt.build(jwt=x_thebes_answer)
+        politically_exposed = PoliticallyExposedCondition(**parameters)
+        return cls(
+            x_thebes_answer=x_thebes_answer,
+            unique_id=jwt.unique_id,
+            politically_exposed=politically_exposed,
+        )
