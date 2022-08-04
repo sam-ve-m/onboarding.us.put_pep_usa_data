@@ -19,9 +19,9 @@ spec:
         - name: env-put-pep-us
           env:
             - name: URL_ONBOARDING_STEP_BR
-              value: "https://dev.api.siga.me/router/onboarding_steps_br"
+              value: "http://router.fission.svc.cluster.local/onboarding/steps_br"
             - name: URL_ONBOARDING_STEP_US
-              value: "https://dev.api.siga.me/router/onboarding_steps_us"
+              value: "http://router.fission.svc.cluster.local/onboarding/steps_us"
             - name: PERSEPHONE_TOPIC_USER
               value: "sphinx_persephone.user.crud"
             - name: MONGODB_DATABASE_NAME
@@ -31,7 +31,7 @@ spec:
             - name: MONGO_CONNECTION_URL
               value: "mongodb://jormungandr:LIwn1In32LdowPqma@172.30.10.75:41000/?authSource=admin&replicaSet=rslionx&readPreference=secondary"
             - name: PERSEPHONE_KAFKA_BROKERS
-              value: "172.30.10.105:9092"
+              value: "cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
             - name: ROOT_LOG_LEVEL
               value: "INFO"
             - name: ETRIA_LOG_LEVEL
