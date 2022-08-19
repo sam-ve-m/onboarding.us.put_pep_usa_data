@@ -8,7 +8,7 @@ spec:
   builder:
     command: build
     image: nexus.sigame.com.br/fission-builder-3.8:0.0.1
-  imagepullsecret: ""
+  imagepullsecret: "nexus-v3"
   keeparchive: false
   poolsize: 3
   resources: {}
