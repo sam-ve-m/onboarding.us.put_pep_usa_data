@@ -23,7 +23,7 @@ spec:
             - name: URL_ONBOARDING_STEP_US
               value: "http://router.fission.svc.cluster.local/onboarding/steps_us"
             - name: PERSEPHONE_TOPIC_USER
-              value: "sphinx_persephone.user.crud"
+              value: "sphinx-persephone.user.crud"
             - name: MONGODB_DATABASE_NAME
               value: "lionx"
             - name: MONGODB_USER_COLLECTION
