@@ -10,6 +10,7 @@ from main import update_politically_exposed_us
 from src.domain.exceptions.model import (
     InvalidStepError,
     InternalServerError,
+    InvalidRiskProfileError,
 )
 from src.services.employ_data.service import PoliticallyExposedService
 
@@ -149,6 +150,39 @@ async def test_update_politically_exposed_us_when_user_is_in_invalid_oboarding_s
         assert (
             result.data
             == b'{"result": null, "message": "User in invalid onboarding step", "success": false, "code": 10}'
+        )
+        assert update_politically_exposed_us_residence_mock.called
+        assert etria_mock.called
+
+
+@mark.asyncio
+@patch.object(Gladsheim, "error")
+@patch.object(Heimdall, "decode_payload")
+@patch.object(PoliticallyExposedService, "update_politically_exposed_data_for_us")
+async def test_update_politically_exposed_us_when_user_doesnt_have_high_risk_tolerance(
+    update_politically_exposed_us_residence_mock,
+    decode_payload_mock,
+    etria_mock,
+):
+    update_politically_exposed_us_residence_mock.side_effect = InvalidRiskProfileError(
+        "errooou"
+    )
+    decode_payload_mock.return_value = (
+        decoded_jwt_ok,
+        HeimdallStatusResponses.SUCCESS,
+    )
+
+    app = Flask(__name__)
+    with app.test_request_context(
+        json=request_ok,
+        headers=Headers({"x-thebes-answer": "test"}),
+    ).request as request:
+
+        result = await update_politically_exposed_us(request)
+
+        assert (
+            result.data
+            == b'{"result": null, "message": "The user needs to have high risk tolerance to do the onboarding in US", "success": false, "code": 10}'
         )
         assert update_politically_exposed_us_residence_mock.called
         assert etria_mock.called
