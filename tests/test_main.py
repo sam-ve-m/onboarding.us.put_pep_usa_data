@@ -5,14 +5,16 @@ from flask import Flask
 from heimdall_client.bifrost import Heimdall, HeimdallStatusResponses
 from pytest import mark
 from werkzeug.test import Headers
+from decouple import Config
 
-from main import update_politically_exposed_us
-from src.domain.exceptions.model import (
-    InvalidStepError,
-    InternalServerError,
-    InvalidRiskProfileError,
-)
-from src.services.employ_data.service import PoliticallyExposedService
+with patch.object(Config, "__call__"):
+    from src.domain.exceptions.model import (
+        InvalidStepError,
+        InternalServerError,
+        InvalidRiskProfileError,
+    )
+    from main import update_politically_exposed_us
+    from src.services.employ_data.service import PoliticallyExposedService
 
 request_ok = {"is_politically_exposed": True, "politically_exposed_names": ["Giogio"]}
 requests_invalid = [

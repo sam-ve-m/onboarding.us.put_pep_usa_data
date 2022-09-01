@@ -1,6 +1,7 @@
 from unittest.mock import patch
 
 import pytest
+from decouple import Config
 from etria_logger import Gladsheim
 
 from src.domain.models.user_data.onboarding_step.model import UserOnboardingStep
@@ -30,8 +31,9 @@ class SessionMock:
 
 @pytest.mark.asyncio
 @patch.object(Gladsheim, "error")
+@patch.object(Config, "__call__")
 @patch.object(StepChecker, "get_session")
-async def test__get_step_br(get_session_mock, etria_error_mock):
+async def test__get_step_br(get_session_mock, mocked_env, etria_error_mock):
     steps_response_dummy = {"result": {"current_step": "finished"}}
     get_session_mock.return_value = SessionMock(steps_response_dummy)
     result = await StepChecker._get_step_br("x-thebes-answer")
@@ -41,8 +43,9 @@ async def test__get_step_br(get_session_mock, etria_error_mock):
 
 @pytest.mark.asyncio
 @patch.object(Gladsheim, "error")
+@patch.object(Config, "__call__")
 @patch.object(StepChecker, "get_session")
-async def test__get_step_br_when_exception_occurs(get_session_mock, etria_error_mock):
+async def test__get_step_br_when_exception_occurs(get_session_mock, mocked_env, etria_error_mock):
     get_session_mock.side_effect = Exception()
     with pytest.raises(Exception):
         result = await StepChecker._get_step_br("x-thebes-answer")
@@ -51,8 +54,9 @@ async def test__get_step_br_when_exception_occurs(get_session_mock, etria_error_
 
 @pytest.mark.asyncio
 @patch.object(Gladsheim, "error")
+@patch.object(Config, "__call__")
 @patch.object(StepChecker, "get_session")
-async def test__get_step_us(get_session_mock, etria_error_mock):
+async def test__get_step_us(get_session_mock, mocked_env, etria_error_mock):
     steps_response_dummy = {"result": {"current_step": "company_director"}}
     get_session_mock.return_value = SessionMock(steps_response_dummy)
     result = await StepChecker._get_step_us("x-thebes-answer")
@@ -62,8 +66,9 @@ async def test__get_step_us(get_session_mock, etria_error_mock):
 
 @pytest.mark.asyncio
 @patch.object(Gladsheim, "error")
+@patch.object(Config, "__call__")
 @patch.object(StepChecker, "get_session")
-async def test__get_step_us_when_exception_occurs(get_session_mock, etria_error_mock):
+async def test__get_step_us_when_exception_occurs(get_session_mock, mocked_env, etria_error_mock):
     get_session_mock.side_effect = Exception()
     with pytest.raises(Exception):
         result = await StepChecker._get_step_us("x-thebes-answer")
