@@ -6,5 +6,9 @@ class InvalidStepError(Exception):
     pass
 
 
+class InvalidRiskProfileError(Exception):
+    pass
+
+
 class InternalServerError(Exception):
     pass

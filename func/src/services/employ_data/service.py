@@ -2,7 +2,11 @@ from decouple import config
 from persephone_client import Persephone
 
 from src.domain.enums.persephone_queue import PersephoneQueue
-from src.domain.exceptions.model import InternalServerError, InvalidStepError
+from src.domain.exceptions.model import (
+    InternalServerError,
+    InvalidStepError,
+    InvalidRiskProfileError,
+)
 from src.domain.models.request.model import PoliticallyExposedRequest
 from src.domain.models.user_data.politically_exposed.model import PoliticallyExposedData
 from src.repositories.user.repository import UserRepository
@@ -43,6 +47,14 @@ class PoliticallyExposedService:
             politically_exposed_names=politically_exposed.politically_exposed_names,
         )
 
+        user_has_high_risk_tolerance = (
+            await UserRepository.verify_if_user_has_high_risk_tolerance(
+                politically_exposed_data
+            )
+        )
+        if not user_has_high_risk_tolerance:
+            raise InvalidRiskProfileError()
+
         (
             sent_to_persephone,
             status_sent_to_persephone,
@@ -57,8 +69,4 @@ class PoliticallyExposedService:
         if sent_to_persephone is False:
             raise InternalServerError("Error sending data to Persephone")
 
-        user_has_been_updated = await UserRepository.update_user(
-            politically_exposed_data
-        )
-        if not user_has_been_updated:
-            raise InternalServerError("Error updating user data")
+        await UserRepository.update_user(politically_exposed_data)
