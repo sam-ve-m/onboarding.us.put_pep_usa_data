@@ -25,7 +25,7 @@ tests_folder=$default_folder_test
 project_reports="../mutation_tests_reports/"
 
 
-default_pytest_command="python3 -m pytest --cov-report term-missing  --cov-config=.coveragerc --cov=${src_folder} ${tests_folder}"
+default_pytest_command="python3 -m pytest -v"
 
 mutatest -s ${src_folder} ${default_params} -x 60 -n ${default_locations_to_tests} -t "${default_pytest_command}" -o ${project_reports}reports.rst ||
 { echo "ERROR: Error while running mutatest. Make sure it is installed or check if the tests ran correctly. [CONTINUING SCRIPT]";  }
