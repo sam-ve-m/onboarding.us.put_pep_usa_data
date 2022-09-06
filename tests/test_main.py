@@ -1,18 +1,24 @@
-from unittest.mock import patch
-
-from etria_logger import Gladsheim
+import logging.config
 from flask import Flask
-from heimdall_client.bifrost import Heimdall, HeimdallStatusResponses
 from pytest import mark
+from unittest.mock import patch
 from werkzeug.test import Headers
+from decouple import RepositoryEnv, Config
 
-from main import update_politically_exposed_us
-from src.domain.exceptions.model import (
-    InvalidStepError,
-    InternalServerError,
-    InvalidRiskProfileError,
-)
-from src.services.employ_data.service import PoliticallyExposedService
+
+with patch.object(RepositoryEnv, "__init__", return_value=None):
+    with patch.object(Config, "__init__", return_value=None):
+        with patch.object(Config, "__call__"):
+            with patch.object(logging.config, "dictConfig"):
+                from heimdall_client.bifrost import Heimdall, HeimdallStatusResponses
+                from etria_logger import Gladsheim
+                from src.domain.exceptions.model import (
+                    InvalidStepError,
+                    InternalServerError,
+                    InvalidRiskProfileError,
+                )
+                from main import update_politically_exposed_us
+                from src.services.employ_data.service import PoliticallyExposedService
 
 request_ok = {"is_politically_exposed": True, "politically_exposed_names": ["Giogio"]}
 requests_invalid = [

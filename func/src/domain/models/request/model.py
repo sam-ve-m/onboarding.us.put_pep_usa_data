@@ -11,8 +11,7 @@ class PoliticallyExposedCondition(BaseModel):
 
     @root_validator()
     def validate_composition(cls, values: Dict[str, Any]):
-        is_politically_exposed = values.get("is_politically_exposed")
-        if not is_politically_exposed:
+        if not (is_politically_exposed := values.get("is_politically_exposed")):
             values["politically_exposed_names"] = []
             return values
 

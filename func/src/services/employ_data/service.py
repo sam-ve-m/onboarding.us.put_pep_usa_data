@@ -30,7 +30,7 @@ class PoliticallyExposedService:
     @classmethod
     async def update_politically_exposed_data_for_us(
         cls, politically_exposed_request: PoliticallyExposedRequest
-    ) -> None:
+    ):
 
         user_step = await StepChecker.get_onboarding_step(
             x_thebes_answer=politically_exposed_request.x_thebes_answer
