@@ -1,0 +1,54 @@
+apiVersion: fission.io/v1
+kind: Environment
+metadata:
+  creationTimestamp: null
+  name: env-put-pep-us
+  namespace: default
+spec:
+  builder:
+    command: build
+    image: nexus.sigame.com.br/fission-builder-3.8:0.0.1
+  imagepullsecret: "nexus-v3"
+  keeparchive: false
+  resources: {}
+  runtime:
+    image: nexus.sigame.com.br/fission-async:0.1.6
+    podspec:
+      containers:
+        - name: env-put-pep-us
+          env:
+            - name: URL_ONBOARDING_STEP_BR
+              value: "http://router.fission.svc.cluster.local/onboarding/steps_br"
+            - name: URL_ONBOARDING_STEP_US
+              value: "http://router.fission.svc.cluster.local/onboarding/steps_us"
+            - name: PERSEPHONE_TOPIC_USER
+              value: "sphinx-persephone.user.crud"
+            - name: MONGODB_DATABASE_NAME
+              value: "lionx"
+            - name: MONGODB_USER_COLLECTION
+              value: "users"
+            - name: MONGO_CONNECTION_URL
+              value: "mongodb://jormungandr:FltuklGHVSDAtldyatuidsafvg532@172.20.28.239:27017,172.20.28.238:27017,172.20.28.76:27017,172.30.18.149:27017/?authSource=admin&replicaSet=rslionx&readPreference=secondary"
+            - name: PERSEPHONE_KAFKA_BROKERS
+              value: "cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
+            - name: ROOT_LOG_LEVEL
+              value: "INFO"
+            - name: ETRIA_LOG_LEVEL
+              value: "INFO"
+            - name: HEIMDALL_REGION_NAME
+              value: "sa-east-1"
+            - name: HEIMDALL_FILE_BUCKET_NAME
+              value: "heimdall_rsa"
+            - name: HEIMDALL_BUCKET_NAME_KEY
+              value: "auth-gateway-keys-uat"
+            - name: HEIMDALL_AWS_ACCESS_KEY_ID
+              value: "AKIATZVFXI25USQWCS5O"
+            - name: HEIMDALL_AWS_SECRET_ACCESS_KEY
+              value: "/5pswHkrCgWhMYrV7TM7oVm8VtulfzdYKE2rlS8"
+            - name: HEIMDALL_REDIS_URL
+              value: "redis://heimdal:FBJAnjkqw21yjewkDSA@172.30.19.183:6379?db=1"
+            - name: HEIMDALL_JWT_REQUIRED_FIELDS
+              value: "[]"
+            - name: ASGI_FRAMEWORK
+              value: "HYPERCORN"
+  version: 3
