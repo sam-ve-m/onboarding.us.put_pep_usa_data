@@ -28,7 +28,7 @@ spec:
             - name: MONGODB_USER_COLLECTION
               value: "users"
             - name: MONGO_CONNECTION_URL
-              value: "mongodb://jormungandr:FltuklGHVSDAtldyatuidsafvg532@172.20.28.239:27017,172.20.28.238:27017,172.20.28.76:27017,172.30.18.149:27017/?authSource=admin&replicaSet=rslionx&readPreference=secondary"
+              value: "mongodb://jormungandr:MMhsdanNNds32Malmnwqyrte@172.30.18.223:41000,172.30.19.240:41000,172.30.19.71:41000/?authSource=admin&replicaSet=rslionx&readPreference=secondary&appname=MongoDB%20Compass&ssl=false"
             - name: PERSEPHONE_KAFKA_BROKERS
               value: "cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
             - name: ROOT_LOG_LEVEL
