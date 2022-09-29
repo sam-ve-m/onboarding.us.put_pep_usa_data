@@ -51,5 +51,5 @@ spec:
     packageref:
       name: fn-put-pep-us-e50d8225-43c0-44e2-85b6-18c0d44d5d28
       namespace: default
-  requestsPerPod: 1
+  requestsPerPod: 10000
   resources: {}
