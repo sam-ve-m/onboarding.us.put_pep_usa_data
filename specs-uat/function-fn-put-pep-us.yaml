@@ -1,0 +1,55 @@
+include:
+- ./func/*
+kind: ArchiveUploadSpec
+name: func-oYV0
+
+---
+apiVersion: fission.io/v1
+kind: Package
+metadata:
+  creationTimestamp: null
+  name: fn-put-pep-us-e50d8225-43c0-44e2-85b6-18c0d44d5d28
+  namespace: default
+spec:
+  deployment:
+    checksum: {}
+  environment:
+    name: env-put-pep-us
+    namespace: default
+  source:
+    checksum: {}
+    type: url
+    url: archive://func-oYV0
+status:
+  buildstatus: pending
+  lastUpdateTimestamp: "2022-07-22T16:40:21Z"
+
+---
+apiVersion: fission.io/v1
+kind: Function
+metadata:
+  creationTimestamp: null
+  name: fn-put-pep-us
+  namespace: default
+spec:
+  InvokeStrategy:
+    ExecutionStrategy:
+      ExecutorType: newdeploy
+      MaxScale: 3
+      MinScale: 1
+      SpecializationTimeout: 120
+      TargetCPUPercent: 80
+    StrategyType: execution
+  concurrency: 500
+  environment:
+    name: env-put-pep-us
+    namespace: default
+  functionTimeout: 60
+  idletimeout: 120
+  package:
+    functionName: main.update_politically_exposed_us
+    packageref:
+      name: fn-put-pep-us-e50d8225-43c0-44e2-85b6-18c0d44d5d28
+      namespace: default
+  requestsPerPod: 10000
+  resources: {}
