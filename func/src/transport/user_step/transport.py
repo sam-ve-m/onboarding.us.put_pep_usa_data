@@ -13,7 +13,7 @@ class StepChecker(RequestInfrastructure):
         get_step_url = config("URL_ONBOARDING_STEP_BR")
         header = {"x_thebes_answer": x_thebes_answer}
         try:
-            session = await cls.get_session()
+            session = cls.get_session()
             async with session.get(get_step_url, headers=header) as response:
                 steps_response = await response.json()
                 step = steps_response["result"]["current_step"]
@@ -29,7 +29,7 @@ class StepChecker(RequestInfrastructure):
         get_step_url = config("URL_ONBOARDING_STEP_US")
         header = {"x_thebes_answer": x_thebes_answer}
         try:
-            session = await cls.get_session()
+            session = cls.get_session()
             async with session.get(get_step_url, headers=header) as response:
                 steps_response = await response.json()
                 step = steps_response["result"]["current_step"]

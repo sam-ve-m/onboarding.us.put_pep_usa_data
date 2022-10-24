@@ -51,7 +51,7 @@ async def test_verify_if_user_has_high_risk_tolerance_when_is_not_high(
     get_collection_mock, etria_error_mock
 ):
     collection_mock = AsyncMock()
-    collection_mock.find_one.return_value = {"suitability": {"score": 0}}
+    collection_mock.find_one.return_value = {"suitability": None}
     get_collection_mock.return_value = collection_mock
     result = await UserRepository.verify_if_user_has_high_risk_tolerance(
         user_data_dummy
@@ -74,6 +74,9 @@ async def test_verify_if_user_has_high_risk_tolerance_when_is_high(
         user_data_dummy
     )
     expected_result = True
+    collection_mock.find_one.assert_called_once_with(
+        {"unique_id": user_data_dummy.unique_id}, {"suitability": True}
+    )
     assert result == expected_result
     assert not etria_error_mock.called
 
