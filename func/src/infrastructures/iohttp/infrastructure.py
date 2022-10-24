@@ -1,12 +1,12 @@
-from aiohttp import ClientSession
+import aiohttp
 
 
 class RequestInfrastructure:
     __session = None
 
     @classmethod
-    async def get_session(cls):
+    def get_session(cls):
         if cls.__session is None:
-            client_session = ClientSession()
+            client_session = aiohttp.ClientSession()
             cls.__session = client_session
         return cls.__session

@@ -54,7 +54,7 @@ class UserRepository:
             user_suitability = await collection.find_one(
                 user_filter, {"suitability": True}
             )
-            if user_suitability.get("suitability", {}).get("score") == 1:
+            if user_suitability.get("suitability"):
                 return True
             return False
 
