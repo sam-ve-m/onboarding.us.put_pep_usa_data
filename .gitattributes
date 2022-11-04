@@ -1,0 +1,2 @@
+specs-drp/env*.yaml  filter=git-crypt diff=git-crypt
+specs-prd/env*.yaml  filter=git-crypt diff=git-crypt
