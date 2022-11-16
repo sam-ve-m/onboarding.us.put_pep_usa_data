@@ -8,7 +8,9 @@ from src.domain.exceptions.model import (
     UnauthorizedError,
     InternalServerError,
     InvalidStepError,
-    InvalidRiskProfileError, DeviceInfoRequestFailed, DeviceInfoNotSupplied,
+    InvalidRiskProfileError,
+    DeviceInfoRequestFailed,
+    DeviceInfoNotSupplied,
 )
 from src.domain.models.request.model import PoliticallyExposedRequest
 from src.domain.models.response.model import ResponseModel

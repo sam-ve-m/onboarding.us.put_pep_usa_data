@@ -16,8 +16,10 @@ with patch.object(RepositoryEnv, "__init__", return_value=None):
                 from src.domain.exceptions.model import (
                     InvalidStepError,
                     InternalServerError,
-                    InvalidRiskProfileError, DeviceInfoRequestFailed, DeviceInfoNotSupplied,
-)
+                    InvalidRiskProfileError,
+                    DeviceInfoRequestFailed,
+                    DeviceInfoNotSupplied,
+                )
                 from main import update_politically_exposed_us
                 from src.services.employ_data.service import PoliticallyExposedService
 

@@ -28,7 +28,7 @@ politically_exposed_request_dummy = PoliticallyExposedRequest(
     x_thebes_answer="x_thebes_answer",
     unique_id="unique_id",
     politically_exposed=politically_exposed_model_dummy,
-    device_info=stub_device_info
+    device_info=stub_device_info,
 )
 politically_exposed_data_dummy = PoliticallyExposedData(
     unique_id=politically_exposed_request_dummy.unique_id,
@@ -60,7 +60,11 @@ def test___model_company_director_data_to_persephone():
 @patch.object(Persephone, "send_to_persephone")
 @patch.object(StepChecker, "get_onboarding_step")
 async def test_update_politically_exposed_data_for_us(
-    get_onboarding_step_mock, persephone_client_mock, update_user_mock, verify_risk, mocked_env
+    get_onboarding_step_mock,
+    persephone_client_mock,
+    update_user_mock,
+    verify_risk,
+    mocked_env,
 ):
     verify_risk.return_value = True
     get_onboarding_step_mock.return_value = onboarding_step_correct_stub
@@ -106,7 +110,11 @@ async def test_update_politically_exposed_data_for_us_when_user_is_in_wrong_step
 @patch.object(Persephone, "send_to_persephone")
 @patch.object(StepChecker, "get_onboarding_step")
 async def test_update_politically_exposed_data_for_us_when_cant_send_to_persephone(
-    get_onboarding_step_mock, persephone_client_mock, update_user_mock, verify_risk, mocked_env
+    get_onboarding_step_mock,
+    persephone_client_mock,
+    update_user_mock,
+    verify_risk,
+    mocked_env,
 ):
     verify_risk.return_value = True
     get_onboarding_step_mock.return_value = onboarding_step_correct_stub

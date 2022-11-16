@@ -6,6 +6,7 @@ from decouple import Config
 
 from src.domain.exceptions.model import InternalServerError
 from src.domain.models.user_data.model import UserData
+
 with patch.object(Config, "__call__"):
     from src.repositories.user.repository import UserRepository
 

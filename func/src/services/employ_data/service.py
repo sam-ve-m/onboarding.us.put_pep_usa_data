@@ -66,7 +66,7 @@ class PoliticallyExposedService:
             partition=PersephoneQueue.USER_POLITICALLY_EXPOSED_IN_US.value,
             message=cls.__model_politically_exposed_data_to_persephone(
                 politically_exposed_data=politically_exposed_data,
-                device_info=politically_exposed_request.device_info
+                device_info=politically_exposed_request.device_info,
             ),
             schema_name="user_politically_exposed_us_schema",
         )
