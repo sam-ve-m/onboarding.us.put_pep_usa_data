@@ -5,6 +5,7 @@ from unittest.mock import patch
 from werkzeug.test import Headers
 from decouple import RepositoryEnv, Config
 
+from src.transport.device_info.transport import DeviceSecurity
 
 with patch.object(RepositoryEnv, "__init__", return_value=None):
     with patch.object(Config, "__init__", return_value=None):
@@ -15,8 +16,8 @@ with patch.object(RepositoryEnv, "__init__", return_value=None):
                 from src.domain.exceptions.model import (
                     InvalidStepError,
                     InternalServerError,
-                    InvalidRiskProfileError,
-                )
+                    InvalidRiskProfileError, DeviceInfoRequestFailed, DeviceInfoNotSupplied,
+)
                 from main import update_politically_exposed_us
                 from src.services.employ_data.service import PoliticallyExposedService
 
@@ -45,7 +46,9 @@ decoded_jwt_invalid = {
 @mark.asyncio
 @patch.object(Heimdall, "decode_payload")
 @patch.object(PoliticallyExposedService, "update_politically_exposed_data_for_us")
+@patch.object(DeviceSecurity, "get_device_info")
 async def test_update_politically_exposed_us_when_request_is_ok(
+    device_info,
     update_politically_exposed_us_residence_mock,
     decode_payload_mock,
 ):
@@ -71,7 +74,9 @@ async def test_update_politically_exposed_us_when_request_is_ok(
 @patch.object(Gladsheim, "error")
 @patch.object(Heimdall, "decode_payload")
 @patch.object(PoliticallyExposedService, "update_politically_exposed_data_for_us")
+@patch.object(DeviceSecurity, "get_device_info")
 async def test_update_politically_exposed_us_when_jwt_is_invalid(
+    device_info,
     update_politically_exposed_us_residence_mock,
     decode_payload_mock,
     etria_mock,
@@ -103,7 +108,9 @@ async def test_update_politically_exposed_us_when_jwt_is_invalid(
 @patch.object(Heimdall, "decode_payload")
 @patch.object(Gladsheim, "error")
 @patch.object(PoliticallyExposedService, "update_politically_exposed_data_for_us")
+@patch.object(DeviceSecurity, "get_device_info")
 async def test_update_politically_exposed_us_when_request_is_invalid(
+    device_info,
     update_politically_exposed_us_residence_mock,
     etria_mock,
     decode_payload_mock,
@@ -132,7 +139,9 @@ async def test_update_politically_exposed_us_when_request_is_invalid(
 @patch.object(Gladsheim, "error")
 @patch.object(Heimdall, "decode_payload")
 @patch.object(PoliticallyExposedService, "update_politically_exposed_data_for_us")
+@patch.object(DeviceSecurity, "get_device_info")
 async def test_update_politically_exposed_us_when_user_is_in_invalid_oboarding_step(
+    device_info,
     update_politically_exposed_us_residence_mock,
     decode_payload_mock,
     etria_mock,
@@ -165,7 +174,9 @@ async def test_update_politically_exposed_us_when_user_is_in_invalid_oboarding_s
 @patch.object(Gladsheim, "error")
 @patch.object(Heimdall, "decode_payload")
 @patch.object(PoliticallyExposedService, "update_politically_exposed_data_for_us")
+@patch.object(DeviceSecurity, "get_device_info")
 async def test_update_politically_exposed_us_when_user_doesnt_have_high_risk_tolerance(
+    device_info,
     update_politically_exposed_us_residence_mock,
     decode_payload_mock,
     etria_mock,
@@ -198,7 +209,9 @@ async def test_update_politically_exposed_us_when_user_doesnt_have_high_risk_tol
 @patch.object(Gladsheim, "error")
 @patch.object(Heimdall, "decode_payload")
 @patch.object(PoliticallyExposedService, "update_politically_exposed_data_for_us")
+@patch.object(DeviceSecurity, "get_device_info")
 async def test_update_politically_exposed_us_when_internal_server_error_occurs(
+    device_info,
     update_politically_exposed_us_residence_mock,
     decode_payload_mock,
     etria_mock,
@@ -231,7 +244,9 @@ async def test_update_politically_exposed_us_when_internal_server_error_occurs(
 @patch.object(Heimdall, "decode_payload")
 @patch.object(Gladsheim, "error")
 @patch.object(PoliticallyExposedService, "update_politically_exposed_data_for_us")
+@patch.object(DeviceSecurity, "get_device_info")
 async def test_update_politically_exposed_us_when_generic_exception_happens(
+    device_info,
     update_politically_exposed_us_residence_mock,
     etria_mock,
     decode_payload_mock,
@@ -253,3 +268,67 @@ async def test_update_politically_exposed_us_when_generic_exception_happens(
         )
         assert update_politically_exposed_us_residence_mock.called
         etria_mock.assert_called()
+
+
+@mark.asyncio
+@patch.object(Gladsheim, "error")
+@patch.object(Heimdall, "decode_payload")
+@patch.object(PoliticallyExposedService, "update_politically_exposed_data_for_us")
+@patch.object(DeviceSecurity, "get_device_info")
+async def test_update_politically_exposed_us_when_fail_to_get_device_info(
+    device_info,
+    update_politically_exposed_us_residence_mock,
+    decode_payload_mock,
+    etria_mock,
+):
+    device_info.side_effect = DeviceInfoRequestFailed()
+    decode_payload_mock.return_value = (
+        decoded_jwt_ok,
+        HeimdallStatusResponses.SUCCESS,
+    )
+
+    app = Flask(__name__)
+    with app.test_request_context(
+        json=request_ok,
+        headers=Headers({"x-thebes-answer": "test"}),
+    ).request as request:
+
+        result = await update_politically_exposed_us(request)
+
+        assert (
+            result.data
+            == b'{"result": null, "message": "Error trying to get device info", "success": false, "code": 100}'
+        )
+        assert etria_mock.called
+
+
+@mark.asyncio
+@patch.object(Gladsheim, "error")
+@patch.object(Heimdall, "decode_payload")
+@patch.object(PoliticallyExposedService, "update_politically_exposed_data_for_us")
+@patch.object(DeviceSecurity, "get_device_info")
+async def test_update_politically_exposed_us_when_device_info_is_not_supplied(
+    device_info,
+    update_politically_exposed_us_residence_mock,
+    decode_payload_mock,
+    etria_mock,
+):
+    device_info.side_effect = DeviceInfoNotSupplied()
+    decode_payload_mock.return_value = (
+        decoded_jwt_ok,
+        HeimdallStatusResponses.SUCCESS,
+    )
+
+    app = Flask(__name__)
+    with app.test_request_context(
+        json=request_ok,
+        headers=Headers({"x-thebes-answer": "test"}),
+    ).request as request:
+
+        result = await update_politically_exposed_us(request)
+
+        assert (
+            result.data
+            == b'{"result": null, "message": "Device info not supplied", "success": false, "code": 10}'
+        )
+        assert etria_mock.called

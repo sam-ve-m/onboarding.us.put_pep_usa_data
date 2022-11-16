@@ -3,6 +3,8 @@ from typing import Optional, Dict, Any, List
 from pydantic import BaseModel, root_validator, constr
 
 from src.domain.models.jwt_data.model import Jwt
+from src.domain.models.user_data.device_info.model import DeviceInfo
+from src.transport.device_info.transport import DeviceSecurity
 
 
 class PoliticallyExposedCondition(BaseModel):
@@ -27,19 +29,23 @@ class PoliticallyExposedRequest:
     def __init__(
         self,
         x_thebes_answer: str,
+        device_info: DeviceInfo,
         unique_id: str,
         politically_exposed: PoliticallyExposedCondition,
     ):
         self.x_thebes_answer = x_thebes_answer
+        self.device_info = device_info
         self.unique_id = unique_id
         self.politically_exposed = politically_exposed
 
     @classmethod
-    async def build(cls, x_thebes_answer: str, parameters: dict):
+    async def build(cls, x_thebes_answer: str, x_device_info: str, parameters: dict):
         jwt = await Jwt.build(jwt=x_thebes_answer)
         politically_exposed = PoliticallyExposedCondition(**parameters)
+        device_info = await DeviceSecurity.get_device_info(x_device_info)
         return cls(
             x_thebes_answer=x_thebes_answer,
+            device_info=device_info,
             unique_id=jwt.unique_id,
             politically_exposed=politically_exposed,
         )
