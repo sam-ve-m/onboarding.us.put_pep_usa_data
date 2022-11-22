@@ -12,3 +12,11 @@ class InvalidRiskProfileError(Exception):
 
 class InternalServerError(Exception):
     pass
+
+
+class DeviceInfoRequestFailed(Exception):
+    pass
+
+
+class DeviceInfoNotSupplied(Exception):
+    pass

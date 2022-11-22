@@ -13,6 +13,7 @@ from src.domain.models.request.model import (
     PoliticallyExposedCondition,
     PoliticallyExposedRequest,
 )
+from src.domain.models.user_data.device_info.model import DeviceInfo
 from src.domain.models.user_data.onboarding_step.model import UserOnboardingStep
 from src.domain.models.user_data.politically_exposed.model import PoliticallyExposedData
 from src.repositories.user.repository import UserRepository
@@ -22,11 +23,12 @@ from src.transport.user_step.transport import StepChecker
 politically_exposed_model_dummy = PoliticallyExposedCondition(
     **{"is_politically_exposed": True, "politically_exposed_names": ["Giogio"]}
 )
-
+stub_device_info = DeviceInfo({"precision": 1}, "")
 politically_exposed_request_dummy = PoliticallyExposedRequest(
     x_thebes_answer="x_thebes_answer",
     unique_id="unique_id",
     politically_exposed=politically_exposed_model_dummy,
+    device_info=stub_device_info,
 )
 politically_exposed_data_dummy = PoliticallyExposedData(
     unique_id=politically_exposed_request_dummy.unique_id,
@@ -39,12 +41,14 @@ onboarding_step_incorrect_stub = UserOnboardingStep("finished", "some_step")
 
 def test___model_company_director_data_to_persephone():
     result = PoliticallyExposedService._PoliticallyExposedService__model_politically_exposed_data_to_persephone(
-        politically_exposed_data_dummy
+        politically_exposed_data_dummy, stub_device_info
     )
     expected_result = {
         "unique_id": politically_exposed_data_dummy.unique_id,
         "politically_exposed": politically_exposed_data_dummy.is_politically_exposed,
         "politically_exposed_names": politically_exposed_data_dummy.politically_exposed_names,
+        "device_info": stub_device_info.device_info,
+        "device_id": stub_device_info.device_id,
     }
     assert result == expected_result
 
@@ -56,7 +60,11 @@ def test___model_company_director_data_to_persephone():
 @patch.object(Persephone, "send_to_persephone")
 @patch.object(StepChecker, "get_onboarding_step")
 async def test_update_politically_exposed_data_for_us(
-    get_onboarding_step_mock, persephone_client_mock, update_user_mock, verify_risk, mocked_env
+    get_onboarding_step_mock,
+    persephone_client_mock,
+    update_user_mock,
+    verify_risk,
+    mocked_env,
 ):
     verify_risk.return_value = True
     get_onboarding_step_mock.return_value = onboarding_step_correct_stub
@@ -102,7 +110,11 @@ async def test_update_politically_exposed_data_for_us_when_user_is_in_wrong_step
 @patch.object(Persephone, "send_to_persephone")
 @patch.object(StepChecker, "get_onboarding_step")
 async def test_update_politically_exposed_data_for_us_when_cant_send_to_persephone(
-    get_onboarding_step_mock, persephone_client_mock, update_user_mock, verify_risk, mocked_env
+    get_onboarding_step_mock,
+    persephone_client_mock,
+    update_user_mock,
+    verify_risk,
+    mocked_env,
 ):
     verify_risk.return_value = True
     get_onboarding_step_mock.return_value = onboarding_step_correct_stub

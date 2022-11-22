@@ -8,6 +8,7 @@ from src.domain.exceptions.model import (
     InvalidRiskProfileError,
 )
 from src.domain.models.request.model import PoliticallyExposedRequest
+from src.domain.models.user_data.device_info.model import DeviceInfo
 from src.domain.models.user_data.politically_exposed.model import PoliticallyExposedData
 from src.repositories.user.repository import UserRepository
 from src.transport.user_step.transport import StepChecker
@@ -18,12 +19,14 @@ class PoliticallyExposedService:
 
     @staticmethod
     def __model_politically_exposed_data_to_persephone(
-        politically_exposed_data: PoliticallyExposedData,
+        politically_exposed_data: PoliticallyExposedData, device_info: DeviceInfo
     ) -> dict:
         data = {
             "unique_id": politically_exposed_data.unique_id,
             "politically_exposed": politically_exposed_data.is_politically_exposed,
             "politically_exposed_names": politically_exposed_data.politically_exposed_names,
+            "device_info": device_info.device_info,
+            "device_id": device_info.device_id,
         }
         return data
 
@@ -62,7 +65,8 @@ class PoliticallyExposedService:
             topic=config("PERSEPHONE_TOPIC_USER"),
             partition=PersephoneQueue.USER_POLITICALLY_EXPOSED_IN_US.value,
             message=cls.__model_politically_exposed_data_to_persephone(
-                politically_exposed_data=politically_exposed_data
+                politically_exposed_data=politically_exposed_data,
+                device_info=politically_exposed_request.device_info,
             ),
             schema_name="user_politically_exposed_us_schema",
         )
