@@ -48,13 +48,13 @@ async def test_update_user_when_exception_happens(
 @mark.asyncio
 @patch.object(Gladsheim, "error")
 @patch.object(UserRepository, "_UserRepository__get_collection")
-async def test_verify_if_user_has_high_risk_tolerance_when_is_not_high(
+async def test_verify_if_user_has_suitability_when_is_not_high(
     get_collection_mock, etria_error_mock
 ):
     collection_mock = AsyncMock()
     collection_mock.find_one.return_value = {"suitability": None}
     get_collection_mock.return_value = collection_mock
-    result = await UserRepository.verify_if_user_has_high_risk_tolerance(
+    result = await UserRepository.verify_if_user_has_suitability(
         user_data_dummy
     )
     expected_result = False
@@ -65,13 +65,13 @@ async def test_verify_if_user_has_high_risk_tolerance_when_is_not_high(
 @mark.asyncio
 @patch.object(Gladsheim, "error")
 @patch.object(UserRepository, "_UserRepository__get_collection")
-async def test_verify_if_user_has_high_risk_tolerance_when_is_high(
+async def test_verify_if_user_has_suitability_when_is_high(
     get_collection_mock, etria_error_mock
 ):
     collection_mock = AsyncMock()
     collection_mock.find_one.return_value = {"suitability": {"score": 1}}
     get_collection_mock.return_value = collection_mock
-    result = await UserRepository.verify_if_user_has_high_risk_tolerance(
+    result = await UserRepository.verify_if_user_has_suitability(
         user_data_dummy
     )
     expected_result = True
@@ -85,12 +85,12 @@ async def test_verify_if_user_has_high_risk_tolerance_when_is_high(
 @mark.asyncio
 @patch.object(Gladsheim, "error")
 @patch.object(UserRepository, "_UserRepository__get_collection")
-async def test_verify_if_user_has_high_risk_tolerance_when_exception_happens(
+async def test_verify_if_user_has_suitability_when_exception_happens(
     get_collection_mock, etria_error_mock
 ):
     get_collection_mock.side_effect = Exception()
     with raises(InternalServerError):
-        result = await UserRepository.verify_if_user_has_high_risk_tolerance(
+        result = await UserRepository.verify_if_user_has_suitability(
             user_data_dummy
         )
     assert etria_error_mock.called

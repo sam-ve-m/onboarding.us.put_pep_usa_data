@@ -7,7 +7,7 @@ from persephone_client import Persephone
 from src.domain.exceptions.model import (
     InternalServerError,
     InvalidStepError,
-    InvalidRiskProfileError,
+    SuitabilityRequiredError,
 )
 from src.domain.models.request.model import (
     PoliticallyExposedCondition,
@@ -55,7 +55,7 @@ def test___model_company_director_data_to_persephone():
 
 @pytest.mark.asyncio
 @patch.object(Config, "__call__")
-@patch.object(UserRepository, "verify_if_user_has_high_risk_tolerance")
+@patch.object(UserRepository, "verify_if_user_has_suitability")
 @patch.object(UserRepository, "update_user")
 @patch.object(Persephone, "send_to_persephone")
 @patch.object(StepChecker, "get_onboarding_step")
@@ -82,7 +82,7 @@ async def test_update_politically_exposed_data_for_us(
 
 
 @pytest.mark.asyncio
-@patch.object(UserRepository, "verify_if_user_has_high_risk_tolerance")
+@patch.object(UserRepository, "verify_if_user_has_suitability")
 @patch.object(UserRepository, "update_user")
 @patch.object(Persephone, "send_to_persephone")
 @patch.object(StepChecker, "get_onboarding_step")
@@ -105,7 +105,7 @@ async def test_update_politically_exposed_data_for_us_when_user_is_in_wrong_step
 
 @pytest.mark.asyncio
 @patch.object(Config, "__call__")
-@patch.object(UserRepository, "verify_if_user_has_high_risk_tolerance")
+@patch.object(UserRepository, "verify_if_user_has_suitability")
 @patch.object(UserRepository, "update_user")
 @patch.object(Persephone, "send_to_persephone")
 @patch.object(StepChecker, "get_onboarding_step")
@@ -131,7 +131,7 @@ async def test_update_politically_exposed_data_for_us_when_cant_send_to_persepho
 
 
 @pytest.mark.asyncio
-@patch.object(UserRepository, "verify_if_user_has_high_risk_tolerance")
+@patch.object(UserRepository, "verify_if_user_has_suitability")
 @patch.object(UserRepository, "update_user")
 @patch.object(Persephone, "send_to_persephone")
 @patch.object(StepChecker, "get_onboarding_step")
@@ -142,7 +142,7 @@ async def test_update_politically_exposed_data_for_us_when_user_doesnt_have_high
     get_onboarding_step_mock.return_value = onboarding_step_correct_stub
     persephone_client_mock.return_value = (True, 0)
     update_user_mock.return_value = False
-    with pytest.raises(InvalidRiskProfileError):
+    with pytest.raises(SuitabilityRequiredError):
         result = await PoliticallyExposedService.update_politically_exposed_data_for_us(
             politically_exposed_request_dummy
         )

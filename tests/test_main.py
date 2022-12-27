@@ -16,9 +16,9 @@ with patch.object(RepositoryEnv, "__init__", return_value=None):
                 from src.domain.exceptions.model import (
                     InvalidStepError,
                     InternalServerError,
-                    InvalidRiskProfileError,
                     DeviceInfoRequestFailed,
                     DeviceInfoNotSupplied,
+                    SuitabilityRequiredError,
                 )
                 from main import update_politically_exposed_us
                 from src.services.employ_data.service import PoliticallyExposedService
@@ -183,7 +183,7 @@ async def test_update_politically_exposed_us_when_user_doesnt_have_high_risk_tol
     decode_payload_mock,
     etria_mock,
 ):
-    update_politically_exposed_us_residence_mock.side_effect = InvalidRiskProfileError(
+    update_politically_exposed_us_residence_mock.side_effect = SuitabilityRequiredError(
         "errooou"
     )
     decode_payload_mock.return_value = (
@@ -201,7 +201,7 @@ async def test_update_politically_exposed_us_when_user_doesnt_have_high_risk_tol
 
         assert (
             result.data
-            == b'{"result": null, "message": "The user needs to have high risk tolerance to do the onboarding in US", "success": false, "code": 10}'
+            == b'{"result": null, "message": "The user needs to have a suitability profile to do the onboarding in US", "success": false, "code": 10}'
         )
         assert update_politically_exposed_us_residence_mock.called
         assert etria_mock.called
