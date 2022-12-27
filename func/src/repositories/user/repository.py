@@ -47,7 +47,7 @@ class UserRepository:
             raise InternalServerError("Error updating user data")
 
     @classmethod
-    async def verify_if_user_has_high_risk_tolerance(cls, user_data: UserData) -> bool:
+    async def verify_if_user_has_suitability(cls, user_data: UserData) -> bool:
         user_filter = {"unique_id": user_data.unique_id}
         try:
             collection = await cls.__get_collection()
@@ -61,7 +61,7 @@ class UserRepository:
         except Exception as ex:
             Gladsheim.error(
                 error=ex,
-                message="UserRepository::verify_if_user_has_high_risk_tolerance::Failed to get user risk profile",
+                message="UserRepository::verify_if_user_has_suitability::Failed to get user risk profile",
                 query=user_filter,
             )
             raise InternalServerError("Error updating user data")

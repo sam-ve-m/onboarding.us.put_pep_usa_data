@@ -8,7 +8,7 @@ from src.domain.exceptions.model import (
     UnauthorizedError,
     InternalServerError,
     InvalidStepError,
-    InvalidRiskProfileError,
+    SuitabilityRequiredError,
 )
 from src.domain.models.request.model import PoliticallyExposedRequest
 from src.domain.models.response.model import ResponseModel
@@ -65,9 +65,9 @@ async def update_politically_exposed_us(request: Request = request) -> Response:
         ).build_http_response(status=HTTPStatus.UNAUTHORIZED)
         return response
 
-    except InvalidRiskProfileError as ex:
+    except SuitabilityRequiredError as ex:
         message = (
-            "The user needs to have high risk tolerance to do the onboarding in US"
+            "The user needs to have a suitability profile to do the onboarding in US"
         )
         Gladsheim.error(error=ex, message=message)
         response = ResponseModel(

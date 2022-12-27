@@ -5,7 +5,7 @@ from src.domain.enums.persephone_queue import PersephoneQueue
 from src.domain.exceptions.model import (
     InternalServerError,
     InvalidStepError,
-    InvalidRiskProfileError,
+    SuitabilityRequiredError,
 )
 from src.domain.models.request.model import PoliticallyExposedRequest
 from src.domain.models.user_data.politically_exposed.model import PoliticallyExposedData
@@ -47,13 +47,13 @@ class PoliticallyExposedService:
             politically_exposed_names=politically_exposed.politically_exposed_names,
         )
 
-        user_has_high_risk_tolerance = (
-            await UserRepository.verify_if_user_has_high_risk_tolerance(
+        user_has_suitability = (
+            await UserRepository.verify_if_user_has_suitability(
                 politically_exposed_data
             )
         )
-        if not user_has_high_risk_tolerance:
-            raise InvalidRiskProfileError()
+        if not user_has_suitability:
+            raise SuitabilityRequiredError()
 
         (
             sent_to_persephone,
