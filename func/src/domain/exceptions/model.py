@@ -6,7 +6,7 @@ class InvalidStepError(Exception):
     pass
 
 
-class InvalidRiskProfileError(Exception):
+class SuitabilityRequiredError(Exception):
     pass
 
 
