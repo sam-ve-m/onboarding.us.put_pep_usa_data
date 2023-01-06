@@ -3,8 +3,8 @@ from http import HTTPStatus
 from etria_logger import Gladsheim
 from flask import request, Request, Response
 
-from src.domain.enums.response.code import InternalCode
-from src.domain.exceptions.model import (
+from func.src.domain.enums.response.code import InternalCode
+from func.src.domain.exceptions.model import (
     UnauthorizedError,
     InternalServerError,
     InvalidStepError,
@@ -12,9 +12,9 @@ from src.domain.exceptions.model import (
     DeviceInfoNotSupplied,
     SuitabilityRequiredError,
 )
-from src.domain.models.request.model import PoliticallyExposedRequest
-from src.domain.models.response.model import ResponseModel
-from src.services.employ_data.service import PoliticallyExposedService
+from func.src.domain.models.request.model import PoliticallyExposedRequest
+from func.src.domain.models.response.model import ResponseModel
+from func.src.services.employ_data.service import PoliticallyExposedService
 
 
 async def update_politically_exposed_us(request: Request = request) -> Response:

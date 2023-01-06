@@ -1,6 +1,6 @@
 from heimdall_client import Heimdall, HeimdallStatusResponses
 
-from src.domain.exceptions.model import UnauthorizedError
+from func.src.domain.exceptions.model import UnauthorizedError
 
 
 class Jwt:

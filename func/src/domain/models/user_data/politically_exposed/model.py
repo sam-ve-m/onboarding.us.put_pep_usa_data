@@ -1,6 +1,6 @@
 from typing import Optional, List
 
-from src.domain.models.user_data.model import UserData
+from func.src.domain.models.user_data.model import UserData
 
 
 class PoliticallyExposedData(UserData):

@@ -4,21 +4,21 @@ import pytest
 from decouple import Config
 from persephone_client import Persephone
 
-from src.domain.exceptions.model import (
+from func.src.domain.exceptions.model import (
     InternalServerError,
     InvalidStepError,
     SuitabilityRequiredError,
 )
-from src.domain.models.request.model import (
+from func.src.domain.models.request.model import (
     PoliticallyExposedCondition,
     PoliticallyExposedRequest,
 )
-from src.domain.models.user_data.device_info.model import DeviceInfo
-from src.domain.models.user_data.onboarding_step.model import UserOnboardingStep
-from src.domain.models.user_data.politically_exposed.model import PoliticallyExposedData
-from src.repositories.user.repository import UserRepository
-from src.services.employ_data.service import PoliticallyExposedService
-from src.transport.user_step.transport import StepChecker
+from func.src.domain.models.user_data.device_info.model import DeviceInfo
+from func.src.domain.models.user_data.onboarding_step.model import UserOnboardingStep
+from func.src.domain.models.user_data.politically_exposed.model import PoliticallyExposedData
+from func.src.repositories.user.repository import UserRepository
+from func.src.services.employ_data.service import PoliticallyExposedService
+from func.src.transport.user_step.transport import StepChecker
 
 politically_exposed_model_dummy = PoliticallyExposedCondition(
     **{"is_politically_exposed": True, "politically_exposed_names": ["Giogio"]}

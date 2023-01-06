@@ -1,5 +1,5 @@
 from unittest.mock import patch, MagicMock
-from src.domain.models.response.model import ResponseModel
+from func.src.domain.models.response.model import ResponseModel
 
 
 @patch.object(ResponseModel, "to_dumps")
