@@ -2,7 +2,7 @@ from json import dumps
 
 from flask import Response
 
-from src.domain.enums.response.code import InternalCode
+from func.src.domain.enums.response.code import InternalCode
 
 
 class ResponseModel:

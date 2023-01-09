@@ -1,5 +1,5 @@
 # OUTSIDE LIBRARIES
-from src.infrastructures.iohttp.infrastructure import RequestInfrastructure
+from func.src.infrastructures.iohttp.infrastructure import RequestInfrastructure
 from unittest.mock import MagicMock
 import aiohttp
 

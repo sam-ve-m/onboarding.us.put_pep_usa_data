@@ -2,9 +2,9 @@ from typing import Optional, Dict, Any, List
 
 from pydantic import BaseModel, root_validator, constr
 
-from src.domain.models.jwt_data.model import Jwt
-from src.domain.models.user_data.device_info.model import DeviceInfo
-from src.transport.device_info.transport import DeviceSecurity
+from func.src.domain.models.jwt_data.model import Jwt
+from func.src.domain.models.user_data.device_info.model import DeviceInfo
+from func.src.transport.device_info.transport import DeviceSecurity
 
 
 class PoliticallyExposedCondition(BaseModel):

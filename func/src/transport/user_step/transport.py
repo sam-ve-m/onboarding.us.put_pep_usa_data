@@ -3,8 +3,8 @@ import asyncio
 from decouple import config
 from etria_logger import Gladsheim
 
-from src.domain.models.user_data.onboarding_step.model import UserOnboardingStep
-from src.infrastructures.iohttp.infrastructure import RequestInfrastructure
+from func.src.domain.models.user_data.onboarding_step.model import UserOnboardingStep
+from func.src.infrastructures.iohttp.infrastructure import RequestInfrastructure
 
 
 class StepChecker(RequestInfrastructure):

@@ -4,11 +4,11 @@ from etria_logger import Gladsheim
 from pytest import mark, raises
 from decouple import Config
 
-from src.domain.exceptions.model import InternalServerError
-from src.domain.models.user_data.model import UserData
+from func.src.domain.exceptions.model import InternalServerError
+from func.src.domain.models.user_data.model import UserData
 
 with patch.object(Config, "__call__"):
-    from src.repositories.user.repository import UserRepository
+    from func.src.repositories.user.repository import UserRepository
 
 
 class UserDataDummy(UserData):

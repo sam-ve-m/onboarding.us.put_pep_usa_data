@@ -1,17 +1,17 @@
 from decouple import config
 from persephone_client import Persephone
 
-from src.domain.enums.persephone_queue import PersephoneQueue
-from src.domain.exceptions.model import (
+from func.src.domain.enums.persephone_queue import PersephoneQueue
+from func.src.domain.exceptions.model import (
     InternalServerError,
     InvalidStepError,
     SuitabilityRequiredError,
 )
-from src.domain.models.request.model import PoliticallyExposedRequest
-from src.domain.models.user_data.device_info.model import DeviceInfo
-from src.domain.models.user_data.politically_exposed.model import PoliticallyExposedData
-from src.repositories.user.repository import UserRepository
-from src.transport.user_step.transport import StepChecker
+from func.src.domain.models.request.model import PoliticallyExposedRequest
+from func.src.domain.models.user_data.device_info.model import DeviceInfo
+from func.src.domain.models.user_data.politically_exposed.model import PoliticallyExposedData
+from func.src.repositories.user.repository import UserRepository
+from func.src.transport.user_step.transport import StepChecker
 
 
 class PoliticallyExposedService:
