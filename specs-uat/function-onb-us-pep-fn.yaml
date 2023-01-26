@@ -34,18 +34,8 @@ metadata:
 spec:
   InvokeStrategy:
     ExecutionStrategy:
-      ExecutorType: newdeploy
-      MaxScale: 3
-      MinScale: 1
+      ExecutorType: poolmgr
       SpecializationTimeout: 120
-      TargetCPUPercent: 0
-      hpaMetrics:
-      - resource:
-          name: cpu
-          target:
-            averageUtilization: 80
-            type: Utilization
-        type: Resource
     StrategyType: execution
   concurrency: 500
   environment:
@@ -58,4 +48,10 @@ spec:
       name: onb-us-pep-fn-bfd52075-b948-4735-bb04-8a7f8744253d
       namespace: default
   requestsPerPod: 10000
-  resources: {}
+  resources:
+    requests:
+      cpu: 128m
+      memory: 128Mi
+    limits:
+      cpu: 256m
+      memory: 256Mi
