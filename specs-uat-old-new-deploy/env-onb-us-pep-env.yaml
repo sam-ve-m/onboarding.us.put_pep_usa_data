@@ -5,17 +5,17 @@ metadata:
   name: onb-us-pep-env
   namespace: default
 spec:
+  builder:
+    container:
+      name: ""
+      resources: {}
   imagepullsecret: nexus-v3
   keeparchive: false
-  poolsize: 2
-  resources:
-    requests:
-      cpu: 128m
-      memory: 128Mi
-    limits:
-      cpu: 256m
-      memory: 256Mi
+  resources: {}
   runtime:
+    container:
+      name: ""
+      resources: {}
     image: nexus.sigame.com.br/fission-onboarding-us-politically-exposed:0.1.0
     podspec:
       containers:
@@ -32,7 +32,7 @@ spec:
             - name: MONGODB_USER_COLLECTION
               value: "users"
             - name: MONGO_CONNECTION_URL
-              value: "mongodb://jormungandr:LIwn1In32LdowPqma@172.30.10.75:41000/?authSource=admin&replicaSet=rslionx&readPreference=secondary"
+              value: "mongodb://jormungandr:MMhsdanNNds32Malmnwqyrte@172.30.18.223:41000,172.30.19.240:41000,172.30.19.71:41000/?authSource=admin&replicaSet=rslionx&readPreference=secondary&appname=MongoDB%20Compass&ssl=false"
             - name: PERSEPHONE_KAFKA_BROKERS
               value: "cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
             - name: ROOT_LOG_LEVEL
@@ -44,13 +44,13 @@ spec:
             - name: HEIMDALL_FILE_BUCKET_NAME
               value: "heimdall_rsa"
             - name: HEIMDALL_BUCKET_NAME_KEY
-              value: "auth-gateway-keys-dev"
+              value: "auth-gateway-keys-uat"
             - name: HEIMDALL_AWS_ACCESS_KEY_ID
               value: "AKIATZVFXI25USQWCS5O"
             - name: HEIMDALL_AWS_SECRET_ACCESS_KEY
               value: "/5pswHkrCgWhMYrV7TM7oVm8VtulfzdYKE2rlS8"
             - name: HEIMDALL_REDIS_URL
-              value: "redis://heimdal:LLOnmUUffhaUHnewIz@172.30.11.235:6379?db=1"
+              value: "redis://heimdal:FBJAnjkqw21yjewkDSA@172.30.19.183:6379?db=1"
             - name: HEIMDALL_JWT_REQUIRED_FIELDS
               value: "[]"
             - name: ASGI_FRAMEWORK
@@ -61,5 +61,4 @@ spec:
               value: "http://router.fission.svc.cluster.local/security/deviceid/deviceinfo/decrypt"
             - name: DEFAULT_PRECISION_VALUE
               value: 1
-  terminationGracePeriod: 3
   version: 3
